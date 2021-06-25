@@ -6,23 +6,35 @@
   id="lab900-select-field-{{ schema?.attribute }}"
 >
   <mat-label>
-    <ng-container *ngIf="loading">{{ 'form.field.loading' | translate }}</ng-container>
-    <ng-container *ngIf="schema.title && !loading">{{ schema.title | translate }}</ng-container>
+    <ng-container *ngIf="schema.title">{{ schema.title | translate }}</ng-container>
   </mat-label>
   <mat-select
     #select
+    Lab900SelectDataSource
+    [selectData]="this.options?.selectOptions"
+    [infiniteScroll]="options?.paging?.enabled"
+    [limit]="options?.paging?.size"
     [compareWith]="options?.compareWith ? options?.compareWith : defaultCompare"
     [formControlName]="schema.attribute"
     [multiple]="options?.multiple"
     [required]="fieldIsRequired"
   >
-    <mat-option *ngFor="let item of selectOptions" [value]="item.value">
+    <mat-option #Lab900SelectSearch *ngIf="options?.search?.enabled">
+      <ngx-mat-select-search
+        [ngModelOptions]="{ standalone: true }"
+        [ngModel]="searchValue"
+        [searching]="searching || dataSource?.loading"
+        [placeholderLabel]="options.search?.placeholder || 'Search...'"
+        [disableScrollToActiveOnOptionsChanged]="options?.paging?.enabled"
+      ></ngx-mat-select-search>
+    </mat-option>
+    <mat-option *ngFor="let item of (dataSource?.options$ | async) || []; trackBy: trackByFn" [value]="item.value">
       <div *ngIf="options?.displayOptionFn" [innerHTML]="options.displayOptionFn(item) | translate"></div>
       <ng-container *ngIf="!options?.displayOptionFn">{{ item.label | translate }}</ng-container>
     </mat-option>
   </mat-select>
-  <mat-hint *ngIf="hint && !(schema.options.hint.hideHintOnValidValue && select.value)"
-    ><span [innerHTML]="hint | translate: hintValueTranslateData"></span
+  <mat-hint *ngIf="hint && !(schema.options.hint.hideHintOnValidValue && select.value)">
+    <span [innerHTML]="hint | translate: hintValueTranslateData"></span
   ></mat-hint>
   <mat-error *ngIf="!valid"><span [innerHTML]="getErrorMessage() | async"></span></mat-error>
 </mat-form-field>
@@ -31,6 +43,8 @@
   <span *ngIf="options?.readonlyLabel || schema.title" class="lab900-readonly-field__label">{{
     options?.readonlyLabel || schema.title | translate
   }}</span>
+  <!--
   <div *ngIf="!loading || !fieldControl.value">{{ selectedOption?.label || '-' | translate }}</div>
   <div *ngIf="loading && fieldControl.value">{{ 'form.field.loading' | translate }}</div>
+  -->
 </div>

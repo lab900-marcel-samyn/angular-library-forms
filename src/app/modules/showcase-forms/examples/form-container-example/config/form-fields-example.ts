@@ -66,16 +66,18 @@ export const formFieldsExample: Lab900FormConfig = {
           options: {
             readonly: true,
             colspan: 12,
-            selectOptions: [
-              {
-                value: 'Dutch',
-                label: 'DUT',
-              },
-              {
-                value: 'English',
-                label: 'ENG',
-              },
-            ],
+            selectOptions: {
+              options: [
+                {
+                  value: 'Dutch',
+                  label: 'DUT',
+                },
+                {
+                  value: 'English',
+                  label: 'ENG',
+                },
+              ],
+            },
           },
         },
       ],

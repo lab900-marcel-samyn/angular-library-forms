@@ -1,11 +1,12 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit, ViewChild } from '@angular/core';
 import { FormComponent } from '../../AbstractFormComponent';
 import { TranslateService } from '@ngx-translate/core';
 import { isObservable, Observable, of, Subject } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { IFieldConditions } from '../../../models/IFieldConditions';
-import { FormFieldSelect } from './field-select.model';
+import { FormFieldSelect, SelectOptions } from './field-select.model';
 import { ValueLabel } from '../../../models/form-field-base';
+import { Lab900SelectDataSourceDirective } from './lab900-select-data-source.directive';
 
 @Component({
   selector: 'lab900-select-field',
@@ -17,11 +18,20 @@ export class SelectFieldComponent extends FormComponent<FormFieldSelect> impleme
   @HostBinding('class')
   public classList = 'lab900-form-field';
 
-  public selectOptions: ValueLabel[];
+  @ViewChild(Lab900SelectDataSourceDirective)
+  public dataSource: Lab900SelectDataSourceDirective;
+
+  public selectData!: SelectOptions;
+
+  public selectOptselectOptionsions: ValueLabel[];
 
   public loading = true;
 
-  public get selectedOption(): any {
+  public searchValue: string;
+
+  public searching = false;
+
+  /*public get selectedOption(): any {
     if (this.selectOptions && this.fieldControl.value) {
       return this.selectOptions.find((opt) =>
         this.options?.compareWith
@@ -30,34 +40,28 @@ export class SelectFieldComponent extends FormComponent<FormFieldSelect> impleme
       );
     }
     return null;
-  }
+  }*/
 
   public constructor(translateService: TranslateService) {
     super(translateService);
     this.addSubscription(
       this.conditionalChange.pipe(switchMap(({ condition, value }) => this.getConditionalOptions(condition, value))),
       (options: ValueLabel[]) => {
-        this.selectOptions = options;
         this.loading = false;
       },
     );
   }
 
-  public defaultCompare = (o1: any, o2: any) => o1 === o2;
-
   public ngOnInit(): void {
     if (this.options?.selectOptions) {
-      const selectOptions = this.options?.selectOptions;
-      const values = typeof selectOptions === 'function' ? selectOptions() : selectOptions;
-
-      this.addSubscription((isObservable(values) ? values : of(values)).pipe(catchError(() => of([]))), (options: ValueLabel[]) => {
-        this.selectOptions = options;
-        this.loading = false;
-      });
-    } else {
-      this.selectOptions = [];
-      this.loading = false;
+      this.selectData = this.options?.selectOptions;
     }
+  }
+
+  public defaultCompare = (o1: any, o2: any) => o1 === o2;
+
+  public trackByFn(_index: number, value: ValueLabel): string {
+    return value?.label;
   }
 
   public onConditionalChange(dependOn: string, value: string, firstRun: boolean): void {
@@ -68,14 +72,11 @@ export class SelectFieldComponent extends FormComponent<FormFieldSelect> impleme
           this.fieldControl.reset();
         }
         this.conditionalChange.next({ condition, value });
-      } else {
-        this.selectOptions = [];
       }
     });
   }
 
   private getConditionalOptions(condition: IFieldConditions, value: any): Observable<ValueLabel[]> {
-    this.selectOptions = [];
     this.loading = true;
     const values = condition?.conditionalOptions(value, this.fieldControl);
     return (isObservable(values) ? values : of(values)).pipe(catchError(() => of([])));

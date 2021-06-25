@@ -59,6 +59,9 @@ import { MultiLangInputFieldComponent } from './components/form-fields/multi-lan
 import { MatMenuModule } from '@angular/material/menu';
 import { LanguagePickerComponent } from './components/language-picker/language-picker.component';
 import { MultiLangFieldControlComponent } from './components/form-fields/multi-lang-input/multi-lang-field-control/multi-lang-field-control.component';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { Lab900SelectDataSourceDirective } from './components/form-fields/select-field/lab900-select-data-source.directive';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 const customFields = [
   UnknownFieldComponent,
@@ -99,6 +102,7 @@ const customFields = [
     MultiLangInputFieldComponent,
     LanguagePickerComponent,
     MultiLangFieldControlComponent,
+    Lab900SelectDataSourceDirective,
   ],
   imports: [
     CommonModule,
@@ -129,6 +133,8 @@ const customFields = [
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatMenuModule,
+    NgxMatSelectSearchModule,
+    ScrollingModule,
   ],
   exports: [Lab900Form, FormDialogDirective, AuthImageDirective, AutofocusDirective],
 })

@@ -7,11 +7,13 @@ export const formConditionalsExample: Lab900FormConfig = {
       editType: EditType.Select,
       options: {
         colspan: 6,
-        selectOptions: [
-          { label: '', value: null },
-          { label: 'user', value: 'user' },
-          { label: 'administrator', value: 'administrator' },
-        ],
+        selectOptions: {
+          options: [
+            { label: '', value: null },
+            { label: 'user', value: 'user' },
+            { label: 'administrator', value: 'administrator' },
+          ],
+        },
       },
     },
     {

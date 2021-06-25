@@ -19,10 +19,12 @@ export class FormCondtionalWithExternalFormExampleComponent {
         title: 'Type',
         options: {
           colspan: 6,
-          selectOptions: [
-            { value: 'a', label: 'a value' },
-            { value: 'b', label: 'b value' },
-          ],
+          selectOptions: {
+            options: [
+              { value: 'a', label: 'a value' },
+              { value: 'b', label: 'b value' },
+            ],
+          },
         },
       },
     ],
